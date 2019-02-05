@@ -110,7 +110,7 @@ var clearBodyExceptContainer = function(doc) {
     for (var i = 0; i < children.length; ++i) {
         var child = children[i];
         if(child.tagName == 'STYLE') continue;
-        if (child.className.indexOf(CONTAINER_CLASS) != -1)  continue;
+        if (child.className.toString().indexOf(CONTAINER_CLASS) != -1)  continue;
         child.parentNode.removeChild(child);
     }
 };

@@ -77,26 +77,11 @@ var PdfBuilder = (function() {
             });
         };
         
-
         var _printMap = function() {
             return new Promise(function(resolve, reject) {
-                var dimensions = FormatConfig.getFormat(format);
-                var convMargins = margins.to(dimensions.unit());
-
-                var pdf = new jsPDF({
-                    unit: dimensions.unit(),
-                    format: FormatConfig.isDefaultFormat(format) ? format : [dimensions.width(), dimensions.height()],
-                    orientation: orientation,
-                    compress: true
-                });
-                
                 var writeCanvasToPdf = function(canvas) {
-                    var renderFormat = getRenderFormat(format, orientation, convMargins);
                     try {
-                        pdf.addImage(canvas.toDataURL('image/jpeg', 1), 'JPEG', convMargins.left(), convMargins.top(),
-                            renderFormat.width(),
-                            renderFormat.height(), null, 'FAST');
-                        resolve(pdf);
+                        resolve(canvas.toDataURL('image/jpeg', 1));
                     } catch(err) {
                         reject(err);
                     }
