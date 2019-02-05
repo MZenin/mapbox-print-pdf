@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-var jsPDF = require('jspdf');
 var html2canvas = require('html2canvas');
 var check = require('./type-check.js');
 var dimensions = require('./dimensions.js');
@@ -48,9 +47,8 @@ function getRenderFormat(format, orientation, margins) {
     return getOrientedDimensions(FormatConfig.getFormat(format), orientation).subtractMargin(margins);
 }
 
-var PdfBuilder = (function() {
-
-    var constructor = function() {
+var PdfBuilder = (function () {
+    var constructor = function () {
         var format = 'a4';
         var dpi = 300;
         var orientation = 'p';
@@ -63,7 +61,7 @@ var PdfBuilder = (function() {
         var margins = Margin.createPDFMargin(0, UNITS.Points);
         var that = this;
 
-        var _cleanup = function(map) {
+        var _cleanup = function (map) {
             map.remove();
             var parent = htmlDoc.parentNode;
             parent.parentNode.removeChild(parent);
@@ -71,23 +69,23 @@ var PdfBuilder = (function() {
             header = null;
             footer = null;
             Object.defineProperty(window, 'devicePixelRatio', {
-                get: function() {
+                get: function () {
                     return actualPixelRatio;
                 }
             });
         };
-        
-        var _printMap = function() {
-            return new Promise(function(resolve, reject) {
-                var writeCanvasToPdf = function(canvas) {
+
+        var _printMap = function () {
+            return new Promise(function (resolve, reject) {
+                var writeCanvasToPdf = function (canvas) {
                     try {
                         resolve(canvas.toDataURL('image/jpeg', 1));
-                    } catch(err) {
+                    } catch (err) {
                         reject(err);
                     }
                 };
 
-                var whenCloned = function(doc) {
+                var whenCloned = function (doc) {
                     Html.removeStylesExceptMapbox(doc, css);
                     Html.clearBodyExceptContainer(doc);
                 };
@@ -101,7 +99,7 @@ var PdfBuilder = (function() {
             });
         };
 
-        var _decreaseDpiToValidValue = function(mapDimens, map) {
+        var _decreaseDpiToValidValue = function (mapDimens, map) {
             mapDimens = mapDimens.to(UNITS.Pixels);
             var newDpi = Math.min(
                 mapUtils.calculateMaximumDpi(new Size(mapDimens.width(), UNITS.Pixels), map, dpi),
@@ -110,7 +108,7 @@ var PdfBuilder = (function() {
             if (newDpi < dpi) {
                 dpi = newDpi;
                 Object.defineProperty(window, 'devicePixelRatio', {
-                    get: function() {
+                    get: function () {
                         return dpi / 96;
                     }
                 });
@@ -120,10 +118,10 @@ var PdfBuilder = (function() {
             }
         };
 
-        var _createHTMLDocument = function(map) {
+        var _createHTMLDocument = function (map) {
             actualPixelRatio = window.devicePixelRatio;
             Object.defineProperty(window, 'devicePixelRatio', {
-                get: function() {
+                get: function () {
                     return dpi / 96;
                 }
             });
@@ -133,19 +131,19 @@ var PdfBuilder = (function() {
             Html.addHTMLObject(header, htmlDoc, renderFormat);
             var container = Html.createMapContainer(htmlDoc);
             Html.addHTMLObject(footer, htmlDoc, renderFormat);
-            
+
             var mapDimens = new Dimens(container.scrollWidth, container.scrollHeight, UNITS.Pixels);
             _decreaseDpiToValidValue(mapDimens, map);
             Html.replaceSvgSources(htmlDoc, RENDER_SCALE);
             return container;
         };
 
-        this.format = function(nwFormat) {
+        this.format = function (nwFormat) {
             if (check.isString(nwFormat) && FormatConfig.formatExists(nwFormat)) {
                 format = nwFormat;
             } else if (Dimens.isValidPdfDimensionObject(nwFormat) && nwFormat.hasOwnProperty('name')) {
                 var addRes = FormatConfig.addFormat(nwFormat.name, nwFormat);
-                if(addRes.error) {
+                if (addRes.error) {
                     console.error(addRes.error);
                 } else {
                     format = nwFormat.name;
@@ -154,7 +152,7 @@ var PdfBuilder = (function() {
             return that;
         };
 
-        this.dpi = function(nwDpi) {
+        this.dpi = function (nwDpi) {
             if (nwDpi <= 0) {
                 console.error('The dpi must be greater than 0, given value was ' + nwDpi);
                 return that;
@@ -163,36 +161,35 @@ var PdfBuilder = (function() {
             return that;
         };
 
-        this.landscape = function() {
+        this.landscape = function () {
             orientation = 'l';
             return that;
         };
 
-        this.portrait = function() {
+        this.portrait = function () {
             orientation = 'p';
             return that;
         };
 
-        this.header = function(nwHeader, elemCallback) {
+        this.header = function (nwHeader, elemCallback) {
             var tmpHeader = HtmlObject.from(nwHeader, FormatConfig);
             if (tmpHeader) {
                 header = tmpHeader;
-                if(check.isFunction(elemCallback)) elemCallback(header.html());
+                if (check.isFunction(elemCallback)) elemCallback(header.html());
             }
             return that;
         };
 
-        this.footer = function(nwFooter, elemCallback) {
+        this.footer = function (nwFooter, elemCallback) {
             var tmpFooter = HtmlObject.from(nwFooter, FormatConfig);
             if (tmpFooter) {
                 footer = tmpFooter;
-                if(check.isFunction(elemCallback)) elemCallback(footer.html());
+                if (check.isFunction(elemCallback)) elemCallback(footer.html());
             }
             return that;
         };
 
-
-        this.scale = function(nwScale) {
+        this.scale = function (nwScale) {
             if (mapUtils.isValidScaleObject(nwScale)) {
                 scale = nwScale;
             } else {
@@ -201,16 +198,16 @@ var PdfBuilder = (function() {
             return that;
         };
 
-        this.keepCSS = function(_css) {
-            if(check.isArray(_css)) {
+        this.keepCSS = function (_css) {
+            if (check.isArray(_css)) {
                 css = _css;
-            } else if(check.isString(_css)) {
+            } else if (check.isString(_css)) {
                 css = [_css];
             }
             return that;
         };
 
-        this.margins = function(nwMargins, unit) {
+        this.margins = function (nwMargins, unit) {
             var tmpMargins = Margin.createPDFMargin(nwMargins, unit ? unit : UNITS.Millimeters);
             if (tmpMargins) {
                 margins = tmpMargins;
@@ -220,19 +217,18 @@ var PdfBuilder = (function() {
             return that;
         };
 
-        var _waitForStyleToLoad = function(map) {
+        var _waitForStyleToLoad = function (map) {
             var TIMEOUT = 100;
             var maxWait = 10000;
-            var waited = -1*TIMEOUT;
+            var waited = -1 * TIMEOUT;
 
-            
-            return new Promise(function(resolve, reject) {
-                var checkStyle = function() {
-                    if(map.isStyleLoaded()) {
+            return new Promise(function (resolve, reject) {
+                var checkStyle = function () {
+                    if (map.isStyleLoaded()) {
                         resolve(map);
                     } else {
                         waited += TIMEOUT;
-                        if(waited >= maxWait) {
+                        if (waited >= maxWait) {
                             reject(new Error('The maps style took too long to load.'));
                         } else {
                             setTimeout(checkStyle, TIMEOUT);
@@ -242,29 +238,26 @@ var PdfBuilder = (function() {
                 checkStyle();
             });
         };
-        this.print = function(map, mapboxgl) {
-            
+        this.print = function (map, mapboxgl) {
             if (!map.isStyleLoaded()) {
-                
-                return new Promise(function(resolve, reject) {
-                    _waitForStyleToLoad(map).then(function() {
+                return new Promise(function (resolve, reject) {
+                    _waitForStyleToLoad(map).then(function () {
                         that.print(map, mapboxgl).then(resolve, reject);
                     }, reject);
                 });
             }
-            return new Promise(function(resolve, reject) {
-                
+            return new Promise(function (resolve, reject) {
                 var container = _createHTMLDocument(map);
-                
-                var afterRenderMapCreate = function(renderMap) {
+
+                var afterRenderMapCreate = function (renderMap) {
                     return new Promise(function (res, rej) {
                         mapUtils.addScale(renderMap, scale, mapboxgl)
                             .then(mapUtils.waitForMapToRender)
                             .then(_printMap)
-                            .then(function(pdf) {
+                            .then(function (pdf) {
                                 _cleanup(renderMap);
                                 res(pdf);
-                            }, function(err) {
+                            }, function (err) {
                                 _cleanup(renderMap);
                                 rej(err);
                             });
@@ -282,5 +275,7 @@ var PdfBuilder = (function() {
 
 module.exports = {
     formats: FormatConfig,
-    build: function() { return new PdfBuilder(); }
+    build: function () {
+        return new PdfBuilder();
+    }
 };

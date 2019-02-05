@@ -1,6 +1,6 @@
 {
   "name": "mapbox-print-canvas",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library for get canvas dataURL from mapbox with all layers",
   "main": "js/mapbox-print-pdf.js",
   "scripts": {
