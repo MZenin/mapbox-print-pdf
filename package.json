@@ -1,6 +1,6 @@
 {
   "name": "mapbox-print-canvas",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "A library for get canvas dataURL from mapbox with all layers",
   "main": "js/mapbox-print-pdf.js",
   "scripts": {
@@ -30,7 +30,9 @@
   "homepage": "https://github.com/Eddie-Larsson/mapbox-print-pdf#readme",
   "dependencies": {
     "css-initials": "^0.2.0",
-    "html2canvas": "https://github.com/Eddie-Larsson/html2canvas/releases/download/v1.0.0-alpha-ie.10/html2canvas-1.0.0-alpha-ie.10.tgz"
+    "html2canvas": "https://github.com/Eddie-Larsson/html2canvas/releases/download/v1.0.0-alpha-ie.10/html2canvas-1.0.0-alpha-ie.10.tgz",
+    "rgbcolor": "^1.0.1",
+    "stackblur-canvas": "^2.2.0"
   },
   "devDependencies": {
     "@webcomponents/template": "^1.2.2",
