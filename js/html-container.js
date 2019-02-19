@@ -7,7 +7,7 @@ var CONTAINER_CLASS = '__mapbox-print-pdf-container__';
 var ATTR_PRESERVE_CSS = 'data-mpp-preserve';
 var DEFAULT_FONT = '"Times New Roman", Times, serif';
 var scaleElement = require('./scale-element.js');
-var canvg = require('canvg');
+var canvg = require('./canvg.min.js');
 
 var HIDDEN_CONTAINER_STYLE = {overflow: 'hidden', height: 0, width: 0, position: 'fixed', top:0, left:0};
 
