@@ -94,6 +94,7 @@ var PdfBuilder = (function () {
                     useCORS: true,
                     scale: RENDER_SCALE,
                     allowTaint: true,
+                    logging: false,
                     onclone: whenCloned
                 }).then(writeCanvasToPdf, reject);
             });
